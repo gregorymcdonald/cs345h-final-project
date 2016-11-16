@@ -1,0 +1,162 @@
+fun concat with l1, l2 =
+if (isNil l1) then l2 else
+!l1@(concat #l1 l2)
+in
+fun reverse with list =
+if (isNil (#list)) then !list else
+(concat (reverse #list) (!list))
+in
+(reverse 1@2@3)
+---
+3
+001002
+-997
+_3
+_001002
+_-997
+______
+a-zA-Z_
+azAZ_
+0_a
+0_1a
+_3
+let x=-997 in lambda y.y x
+"
+let
+with
+in
+lambda
+func
+"
+""
+"
+
+
+"
+LET
+IN
+FUN
+WITH
+LAMBDA
+IF
+THEN
+ELSE
+PRINT
+READINT
+READSTRING
+ISNIL
+NIL
+(* this (* is (* a test*)
+*)*)
+---
+l a m b d a
+l,a,m,b,d,a
+l+a+m+b+d+a
+l-a-m-b-d-a
+l*a*m*b*d*a
+l/a/m/b/d/a
+l!a!m!b!d!a
+l#a#m#b#d#a
+---
+( * lambda x. x 3 * )
+(* ( * * ) *)
+(*()*)
+( * ( *(**)* )
+---
+readStringreadIntprintisNil!#@Nil.withlet+-_12AbC*/001002()&|=<>>>=<<=ifthenelselambdafun,"this is just a test"in
+---
+<(*=*)>
+>(*=*)=
+<(*=*)=
+read(*Int*)String
+read(*String*)Int
+pr(**)int
+i(*f*)f
+(* . *)
+---
+""
+"readString"
+"readInt"
+"print"
+"!"
+"#"
+"@"
+"Nil"
+"."
+"with"
+"let"
+"plus"
+"minus"
+"_12AbC"
+"*"
+"/"
+"001002"
+"-997"
+"("
+")"
+"&"
+"|"
+"="
+"<>"
+">"
+">="
+"<"
+"<="
+"if"
+"then"
+"else"
+"lambda"
+"fun"
+","
+"this is just
+a test"
+"in"
+"~~~~~"
+---
+" (* a *) "
+""
+" (**) "
+" b "
+(*
+"(* *)"
+*)
+---
+(* a (**) b (* c (**) d (* e (*(*(*(*(**)*)*)*)*) f *) g (**) h *) i (**) j *)
+---
+(* Greg McDonald (grm695@utexas.edu) *)
+readString
+readInt
+print
+isNil
+!
+#
+@
+Nil
+.
+with
+let
++
+-
+_12AbC
+*
+/
+001002
+(
+)
+&
+|
+=
+<>
+>
+>=
+<
+<=
+if
+then
+else
+lambda
+fun
+,
+"this is just
+a test"
+in
