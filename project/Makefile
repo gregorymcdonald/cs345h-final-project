@@ -7,12 +7,6 @@ OBJs =   parser.tab.o lex.yy.o  Expression.o SymbolTable.o frontend.o AstRead.o 
 
 default: lexer
 
-parser: ${OBJs}
-	${CC} ${CFLAGS} ${INC_PARAMS} ${OBJs} -o parser -lfl
-
-parser.tab.c: parser.y parser-defs.h
-	bison -dv parser.y
-
 lexer: ${OBJs}
 	${CC} ${CFLAGS} ${INC_PARAMS} ${OBJs} -o lexer -lfl
 
