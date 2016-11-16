@@ -146,6 +146,10 @@ ALPHANUMERIC_CHARACTER ({ALPHA_CHARACTER}|{NUMERIC_CHARACTER})
 	return TOKEN_LET;
 }
 
+(?i:"import") {
+    return TOKEN_IMPORT;
+}
+
 "+" {
 	return TOKEN_PLUS;
 }

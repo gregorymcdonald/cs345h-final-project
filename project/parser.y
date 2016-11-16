@@ -58,6 +58,7 @@ TOKEN_COMMA
 TOKEN_STRING 
 TOKEN_ERROR 
 TOKEN_IN
+TOKEN_IMPORT
 
 
 
@@ -124,6 +125,11 @@ input TOKEN_WITH
 input TOKEN_LET
 {
 	cout << "TOKEN_LET" << endl;
+}
+|
+input TOKEN_IMPORT
+{
+    cout << "TOKEN_IMPORT" << endl;
 }
 |
 input TOKEN_PLUS
