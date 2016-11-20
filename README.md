@@ -2,9 +2,9 @@
 Team Members: Alex Meed, Brian Zhu, Greg McDonald, Patrick Moore  
 Report Link (on Overleaf): https://www.overleaf.com/7044654wzpbhcfhgmmz
 
-How to Run:
+How to Run Lexer:
 	- Clone Repo
-	- Enter in project directory
+	- Enter in lexer directory
 	- Run 'make tokens'
 	- Run 'make lexer'
 	- Test with './lexer test.L'
