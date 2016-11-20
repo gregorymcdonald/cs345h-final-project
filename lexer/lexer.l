@@ -150,6 +150,26 @@ ALPHANUMERIC_CHARACTER ({ALPHA_CHARACTER}|{NUMERIC_CHARACTER})
     return TOKEN_IMPORT;
 }
 
+(?i:"native") {
+    return TOKEN_NATIVE;
+}
+
+(?i:"export") {
+    return TOKEN_EXPORT;
+}
+
+(?i:"as") {
+    return TOKEN_AS;
+}
+
+(?i:"native") {
+    return TOKEN_NATIVE;
+}
+
+"::" {
+    return TOKEN_DOUBLECOLON;
+}
+
 "+" {
 	return TOKEN_PLUS;
 }

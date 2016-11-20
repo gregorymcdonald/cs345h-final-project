@@ -34,7 +34,7 @@ TOKEN_DOT
 TOKEN_WITH 
 TOKEN_LET 
 TOKEN_PLUS 
-TOKEN_MINUS 
+TOKEN_MINUS
 TOKEN_IDENTIFIER 
 TOKEN_TIMES 
 TOKEN_DIVIDE 
@@ -59,6 +59,10 @@ TOKEN_STRING
 TOKEN_ERROR 
 TOKEN_IN
 TOKEN_IMPORT
+TOKEN_EXPORT
+TOKEN_NATIVE
+TOKEN_AS
+TOKEN_DOUBLECOLON
 
 
 
@@ -130,6 +134,26 @@ input TOKEN_LET
 input TOKEN_IMPORT
 {
     cout << "TOKEN_IMPORT" << endl;
+}
+|
+input TOKEN_NATIVE
+{
+    cout << "TOKEN_NATIVE" << endl;
+}
+|
+input TOKEN_EXPORT
+{
+    cout << "TOKEN_EXPORT" << endl;
+}
+|
+input TOKEN_AS
+{
+    cout << "TOKEN_AS" << endl;
+}
+|
+input TOKEN_DOUBLECOLON
+{
+    cout << "TOKEN_DOUBLECOLON" << endl;
 }
 |
 input TOKEN_PLUS
