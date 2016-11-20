@@ -3,4 +3,5 @@
 lexer/lex.yy.*
 lexer/lexer.yy.*
 lexer/lexer
+parser.output
 parser.tab.*
