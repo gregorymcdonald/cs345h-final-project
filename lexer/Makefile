@@ -17,6 +17,8 @@ lex.yy.c: lexer.l parser-defs.h
 tokens:
 	bison -d parser.y
 
+parser.tab.c: tokens
+
 frontend.o:	frontend.cpp 
 	${CC} ${CFLAGS} ${INC_PARAMS} -c frontend.cpp
 	
