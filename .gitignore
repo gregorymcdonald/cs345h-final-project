@@ -1,3 +1,6 @@
+*.o
+.*.swp
 lexer/lex.yy.*
+lexer/lexer.yy.*
 lexer/lexer
 parser.tab.*
