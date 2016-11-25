@@ -19,14 +19,20 @@ namespace {
     }
 }
 
-template <typename RetType, typename... ArgType>
-RetType call_native(std::string module, std::string function, ArgType... argv) {
+template <typename T>
+T get_native(std::string module, std::string symbol) {
     // Fetch module, and open if not already open
     shlib so = fetch_module(module);
     if (!so) throw std::runtime_error("module " + module + " not found");
 
+    T sym = reinterpret_cast<T>(dlsym(so, symbol.data()));
+    if (!sym) throw std::runtime_error("symbol " + module + "::" + symbol + " not found");
+    return sym;
+}
+
+template <typename RetType, typename... ArgType>
+RetType call_native(std::string module, std::string function, ArgType... argv) {
     typedef RetType (*FuncType)(ArgType...);
-    FuncType func = reinterpret_cast<FuncType>(dlsym(so, function.data()));
-    if (!func) throw std::runtime_error("function " + module + "::" + function + " not found");
+    FuncType func = get_native<FuncType>(module, function);
     return func(argv...);
 }
