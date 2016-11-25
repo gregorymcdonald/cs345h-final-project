@@ -4,6 +4,8 @@
 #include <exception>
 #include <map>
 
+typedef void* shlib;
+
 namespace {
     std::map<std::string, shlib> open_modules;
 

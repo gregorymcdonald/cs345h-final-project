@@ -1,7 +1,5 @@
 #include <string>
 
-typedef void* shlib;
-
 // Calls a native function and returns its result.
 //
 // The function is pulled from the file "libmodule.so" in the working directory, replacing module with the value of the module parameter.
