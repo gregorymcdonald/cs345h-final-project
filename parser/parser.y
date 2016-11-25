@@ -98,6 +98,16 @@ program: expression
 }
 
 expression:
+TOKEN_IMPORT expression TOKEN_IN expression %prec EXPR
+{
+    string file_name_lexeme = GET_LEXEME($2);
+    cout << "Import request for: \"" + file_name_lexeme + "\"" << endl;
+	// XXX check that file is imported?
+
+	// Perform no evaluation, yet, for import expressions
+	$$ = $4;
+}
+|
 TOKEN_LET TOKEN_IDENTIFIER TOKEN_EQ expression TOKEN_IN expression %prec EXPR
 {
     string id_lexeme = GET_LEXEME($2);
