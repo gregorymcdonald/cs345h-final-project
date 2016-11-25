@@ -128,6 +128,16 @@ TOKEN_NATIVE TOKEN_STRING TOKEN_AS TOKEN_IDENTIFIER TOKEN_IN expression %prec EX
     $$ = $6;
 }
 |
+TOKEN_IDENTIFIER TOKEN_DOUBLECOLON TOKEN_IDENTIFIER
+{
+    // Dummy recognizer for double_colon
+    // Default behavior is to evaluate to the left identifer
+	string left_id_lexeme = GET_LEXEME($1);
+	string right_id_lexeme = GET_LEXEME($3);
+    cout << "DEBUG: Double-colon accessor: " + left_id_lexeme + "::" + right_id_lexeme << endl;
+	$$ = AstIdentifier::make(left_id_lexeme);
+}
+|
 TOKEN_LET TOKEN_IDENTIFIER TOKEN_EQ expression TOKEN_IN expression %prec EXPR
 {
     string id_lexeme = GET_LEXEME($2);
@@ -246,7 +256,7 @@ TOKEN_INT
 |
 TOKEN_STRING 
 {
-	  string lexeme = GET_LEXEME($1);
+	string lexeme = GET_LEXEME($1);
   	Expression* e = AstString::make(lexeme);
   	$$ = e;
 }  
