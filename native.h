@@ -1,3 +1,6 @@
+#ifndef _NATIVE_H_
+#define _NATIVE_H_
+
 #include <string>
 
 // Calls a native function and returns its result.
@@ -10,3 +13,5 @@
 // In particular, references (like int&) and standard library types (like std::vector) are NOT standard layout types.
 template <typename RetType, typename... ArgType>
 RetType call_native(std::string module, std::string function, ArgType... argv);
+
+#endif
