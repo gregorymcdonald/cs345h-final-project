@@ -98,14 +98,34 @@ program: expression
 }
 
 expression:
-TOKEN_IMPORT expression TOKEN_IN expression %prec EXPR
+TOKEN_IMPORT TOKEN_STRING TOKEN_IN expression %prec EXPR
 {
     string file_name_lexeme = GET_LEXEME($2);
-    cout << "Import request for: \"" + file_name_lexeme + "\"" << endl;
-	// XXX check that file is imported?
+    cout << "DEBUG: Import statement for file: \"" + file_name_lexeme + "\"" << endl;
+	// XXX check that file is imported
 
-	// Perform no evaluation, yet, for import expressions
+	// Perform no evaluation for import expressions
 	$$ = $4;
+}
+|
+TOKEN_EXPORT TOKEN_IDENTIFIER TOKEN_IN expression %prec EXPR
+{
+    string id_lexeme = GET_LEXEME($2);
+    cout << "DEBUG: Export statement for identifier: " + id_lexeme << endl;
+    // XXX check that identifier exists
+
+    // Perform no evaluation for export expressions
+    $$ = $4;
+}
+|
+TOKEN_NATIVE TOKEN_STRING TOKEN_AS TOKEN_IDENTIFIER TOKEN_IN expression %prec EXPR
+{
+    string file_name_lexeme = GET_LEXEME($2);
+    cout << "DEBUG: Native code in file: \"" + file_name_lexeme + "\"" << endl;
+	// XXX check that file/compiled native code exists
+
+	// XXX Build an AST structure representing native code
+    $$ = $6;
 }
 |
 TOKEN_LET TOKEN_IDENTIFIER TOKEN_EQ expression TOKEN_IN expression %prec EXPR
