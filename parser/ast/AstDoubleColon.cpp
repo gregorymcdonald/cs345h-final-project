@@ -19,7 +19,7 @@ AstDoubleColon::AstDoubleColon(const string & left_id, const string & right_id)
 
 string AstDoubleColon::to_string(int d)
 {
-  return get_depth(d) + this->left_id->to_string(0) + "::" + this->right_id->to_string(0) + "\n";
+  return get_depth(d) + this->to_value() + "\n";
 }
 string AstDoubleColon::to_value()
 {
