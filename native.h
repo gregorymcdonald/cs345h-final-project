@@ -18,7 +18,7 @@ T* get_native(std::string module, std::string symbol);
 // Calls a native function and returns its result.
 //
 // Equivalent to
-// (get_native<RetType (*)(ArgType...)>(module, function))(argv...).
+// (get_native<RetType(ArgType...)>(module, function))(argv...).
 //
 // The function is pulled from the file "libmodule.so" in the working directory, replacing module with the value of the module parameter.
 // Throws a runtime_error if the module or function cannot be found.
