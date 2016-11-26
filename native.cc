@@ -3,6 +3,7 @@
 #include <dlfcn.h>
 #include <exception>
 #include <map>
+#include <type_traits>
 
 typedef void* shlib;
 
@@ -19,15 +20,18 @@ namespace {
     }
 }
 
-template <typename T>
-T get_native(std::string module, std::string symbol) {
+template <typename T, typename U>
+U get_native(std::string module, std::string symbol) {
     // Fetch module, and open if not already open
     shlib so = fetch_module(module);
     if (!so) throw std::runtime_error("module " + module + " not found");
 
-    T sym = reinterpret_cast<T>(dlsym(so, symbol.data()));
+    void* sym = dlsym(so, symbol.data());
     if (!sym) throw std::runtime_error("symbol " + module + "::" + symbol + " not found");
-    return sym;
+    typedef typename std::remove_pointer<T>::type Tunstar;
+    if (std::is_function<Tunstar>::value)
+        return reinterpret_cast<T>(sym);
+    return static_cast<T*>(sym);
 }
 
 template <typename RetType, typename... ArgType>
