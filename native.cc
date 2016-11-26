@@ -35,7 +35,13 @@ T* get_native(std::string module, std::string symbol) {
 
 template <typename RetType, typename... ArgType>
 RetType call_native(std::string module, std::string function, ArgType... argv) {
+    // Fun fact: if you're calling a C function, the standard technically says that FuncType should be defined with C language linkage (aka extern "C").
+    // But you can't do extern "C" inside templates or functions, even if it's just a typedef, so fixing this is impossible in the general case.
+    // This isn't a problem on "normal" architectures, so we can safely ignore this.
+    // If we end up calling only one or two function signatures, and want to be really standards compliant, we can extern "C" typedef what we need at namespace scope.
+    // For now, though, screw it.
     typedef RetType FuncType(ArgType...);
+
     FuncType* func = get_native<FuncType>(module, function);
     return func(argv...);
 }
