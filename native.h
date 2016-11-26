@@ -14,13 +14,16 @@ struct star_unless_function_pointer<R (*)(A...)> {
 };
 
 // Retrieves a symbol from a native file.
-// For data symbols (T is anything but a function pointer), returns a pointer to the data (T*).
-// For function symbols (T is a function pointer), returns a function pointer (T).
+//
+// T is the type of the symbol as declared in the original library.
+// So get_native<int> for an int and get_native<int(int)> for a function.
+// For data symbols (T is anything but a function pointer), returns a pointer to the data.
+// For function symbols (T is a function pointer), returns a function pointer.
 //
 // The symbol is pulled from the file "libmodule.so" in the working directory, replacing module with the value of the module parameter.
 // Throws a runtime_error if the module or symbol cannot be found.
 template <typename T>
-typename star_unless_function_pointer<T>::type get_native(std::string module, std::string symbol);
+T* get_native(std::string module, std::string symbol);
 
 // Calls a native function and returns its result.
 //

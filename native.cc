@@ -21,22 +21,21 @@ namespace {
 }
 
 template <typename T>
-typename star_unless_function_pointer<T>::type get_native(std::string module, std::string symbol) {
+T* get_native(std::string module, std::string symbol) {
     // Fetch module, and open if not already open
     shlib so = fetch_module(module);
     if (!so) throw std::runtime_error("module " + module + " not found");
 
     void* sym = dlsym(so, symbol.data());
     if (!sym) throw std::runtime_error("symbol " + module + "::" + symbol + " not found");
-    typedef typename std::remove_pointer<T>::type Tunstar;
-    if (std::is_function<Tunstar>::value)
-        return reinterpret_cast<T>(sym);
+    if (std::is_function<T>::value)
+        return reinterpret_cast<T*>(sym);
     return static_cast<T*>(sym);
 }
 
 template <typename RetType, typename... ArgType>
 RetType call_native(std::string module, std::string function, ArgType... argv) {
-    typedef RetType (*FuncType)(ArgType...);
-    FuncType func = get_native<FuncType>(module, function);
+    typedef RetType FuncType(ArgType...);
+    FuncType* func = get_native<FuncType>(module, function);
     return func(argv...);
 }
