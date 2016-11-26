@@ -3,14 +3,24 @@
 
 #include <string>
 
+// Returns T*, unless T is a function pointer, in which case returns T.
+template <typename T>
+struct star_unless_function_pointer {
+    typedef T* type;
+};
+template <typename R, typename... A>
+struct star_unless_function_pointer<R (*)(A...)> {
+    typedef R (*type)(A...);
+};
+
 // Retrieves a symbol from a native file.
 // For data symbols, returns a pointer to the data (U = T*).
 // For function symbols, returns a function pointer (U = T).
 //
 // The symbol is pulled from the file "libmodule.so" in the working directory, replacing module with the value of the module parameter.
 // Throws a runtime_error if the module or symbol cannot be found.
-template <typename T, typename U>
-U get_native(std::string module, std::string symbol);
+template <typename T>
+typename star_unless_function_pointer<T>::type get_native(std::string module, std::string symbol);
 
 // Calls a native function and returns its result.
 //

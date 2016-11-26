@@ -20,8 +20,8 @@ namespace {
     }
 }
 
-template <typename T, typename U>
-U get_native(std::string module, std::string symbol) {
+template <typename T>
+typename star_unless_function_pointer<T>::type get_native(std::string module, std::string symbol) {
     // Fetch module, and open if not already open
     shlib so = fetch_module(module);
     if (!so) throw std::runtime_error("module " + module + " not found");
