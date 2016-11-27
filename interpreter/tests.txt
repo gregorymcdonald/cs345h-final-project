@@ -1,0 +1,91 @@
+(* Test whether all if cases are evaluated *)
+let pass = 1 in
+let fail  = 0 in
+let int = 77 in
+let string = "string" in
+if (if pass then fail else string + int) then Nil + string else "pass"
+---
+(* Test correct typing of binary operators *)
+let PlusInt = 1 + 2 in
+let PlusString = "duck" + "quack" in
+let Minus = 1 - 2 in
+let Times = 1 * 2 in
+let Divide = 1 / 2 in
+let EqualTrueInt = 1=1 in
+let EqualTrueString = "duck"="duck" in
+let EqualFalseInt = 1=2 in
+let EqualFalseString = "duck"="quack" in
+let NotEqualTrueInt = 1<>2 in
+let NotEqualTrueString = "duck"<>"quack" in
+let NotEqualFalseInt = 1<>1 in
+let NotEqualFalseString = "duck"<>"duck" in
+let LT_True = 1<2 in
+let LT_False = 2<1 in
+let LEQ_True = 1<=1 in
+let LEQ_False = 2<=1 in
+let GT_True = 2>1 in
+let GT_False = 1>2 in
+let GEQ_True = 1>=1 in
+let GEQ_False = 1>=2 in
+let AND_True = 1&1 in
+let AND_False = 0&1 in
+let AND_False = 1&0 in
+let AND_False = 0&0 in
+let OR_True = 1|1 in
+let OR_True = 0|1 in
+let OR_True = 1|0 in
+let OR_False = 0|0 in
+let CONS_Succeed = "duck"@1 in
+let CONS_Succeed = Nil@"quack" in
+let CONS_Fail = "duck"@Nil in
+0
+---
+(* Let refers to the most recent mapping *)
+let a = 1 in
+let b = "string" in
+let a = "string2" in
+let c = a + " " + b in
+let b = 2 in
+let a = 1 in
+let d = a + b in
+let d = c in
+c + " " + d
+---
+(* Test application, single and multi case *)
+let simple_lambda = lambda x.x in
+let plus_lambda = lambda x. lambda y. x+y in
+let application_lambda = lambda z. (simple_lambda z) in
+let divergent_lambda = lambda q. (q q) in
+let value = "quack " in
+( (divergent_lambda simple_lambda) simple_lambda application_lambda (plus_lambda value value) )
+---
+(* Test run time errors, to test different errors change the error number to the corresponding error *)
+let error_number = 1 in
+
+let int = 77 in
+let string = "duck" in
+let list = 1@2@3 in
+
+if error_number = 1 then 
+	(* "Binpo @ is the only legal binop for lists" *)
+	(int + list)
+else if error_number = 2 then 
+	(* "Binop can only be applied to expressions of same type" *)
+	(int + string)
+else if error_number = 3 then 
+	(* "Binop X cannot be applied to strings" *)
+	(string - string)
+else if error_number = 4 then 
+	(* "Only lambda expressions can be applied to other expressions" *)
+	(string string)
+else if error_number = 5 then 
+	(* "Identifier ID is not bound in current context" *)
+	(int + not_bound_identifier)
+else if error_number = 6 then 
+	(* "Predicate in conditional must be an integer" *)
+	(if string then string else int)
+else if error_number = 7 then 
+	(* "Nil can only be used with binop @" *)
+	(int + Nil)
+else
+0
