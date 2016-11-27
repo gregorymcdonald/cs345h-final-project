@@ -280,26 +280,27 @@ Expression* Evaluator::eval(Expression* e){
     {
 		// XXX Remove debug printing
 		cout << "Evaluating Double Colon" << endl;
-        AstDoubleColon* dc = static_cast<AstDoubleColon*>(e);
-		//res_exp = eval_unop(b);
-		// XXX evaluate doublecolon
+        
+		//AstDoubleColon* dc = static_cast<AstDoubleColon*>(e);
+		// XXX determine if any evaluation is needed for doublecolon
+		res_exp = e;
         break;
     }
 	case AST_NATIVE:
     {
 		// XXX Remove debug printing
         cout << "Evaluating Native" << endl;
-		// XXX evaluate native
-		/*
-        AstLet* let = static_cast<AstLet*>(e);
-        Expression* e1 = Evaluator::eval(let->get_val());
+		
+        AstNative* native = static_cast<AstNative*>(e);
         sym_tab.push();
-        sym_tab.add(let->get_id(), e1);
-        Expression* e2 = Evaluator::eval(let->get_body());
+		// Add a mapping from the id to this AstNative, may be a bad idea
+		// Alternatively want a NativeModule expression
+        sym_tab.add(native->get_id(), e);
+        Expression* e2 = Evaluator::eval(native->get_body());
         sym_tab.pop();
 
         res_exp = e2;
-		*/
+		
         break;
     }
 	case AST_UNOP:
@@ -401,12 +402,12 @@ Expression* Evaluator::eval(Expression* e){
     }
 	case AST_LIST:
     {
-        // XXX
+        res_exp = e;
         break;
     }
 	case AST_IDENTIFIER_LIST:
     {
-        // XXX
+        res_exp = e;
         break;
     }
 
