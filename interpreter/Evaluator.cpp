@@ -4,8 +4,8 @@
 #include "ast/expression.h"
 
 /*
- * Author: Greg McDonald
- * eid: grm695
+ * Author(s): Alex Meed, Brain Zhu, Greg McDonald, Patrick Moore
+ * eid(s): grm695
  */
 
 
@@ -227,6 +227,7 @@ Expression* Evaluator::eval_binop(AstBinOp* b){
 	return result;
 }
 
+// XXX make native applications work here
 Expression* Evaluator::eval_expression_list(AstExpressionList* l)
 {
 	Expression* result = NULL;
@@ -275,6 +276,32 @@ Expression* Evaluator::eval(Expression* e){
 	switch(e->get_type())
 	{
 	
+	case AST_DOUBLECOLON:
+    {
+		// XXX Remove debug printing
+		cout << "Evaluating Double Colon" << endl;
+        AstDoubleColon* dc = static_cast<AstDoubleColon*>(e);
+		//res_exp = eval_unop(b);
+		// XXX evaluate doublecolon
+        break;
+    }
+	case AST_NATIVE:
+    {
+		// XXX Remove debug printing
+        cout << "Evaluating Native" << endl;
+		// XXX evaluate native
+		/*
+        AstLet* let = static_cast<AstLet*>(e);
+        Expression* e1 = Evaluator::eval(let->get_val());
+        sym_tab.push();
+        sym_tab.add(let->get_id(), e1);
+        Expression* e2 = Evaluator::eval(let->get_body());
+        sym_tab.pop();
+
+        res_exp = e2;
+		*/
+        break;
+    }
 	case AST_UNOP:
 	{
 		AstUnOp* b = static_cast<AstUnOp*>(e);
@@ -383,10 +410,8 @@ Expression* Evaluator::eval(Expression* e){
         break;
     }
 
-	//ADD CASES FOR ALL EXPRESSIONS!!
 	default:
 		assert(false);
-
 
 	}
 	return res_exp;
