@@ -39,9 +39,7 @@ T* get_native(std::string module, std::string symbol) {
 
     void* sym = dlsym(so, symbol.data());
     if (!sym) throw std::runtime_error("symbol " + module + "::" + symbol + " not found");
-    if (std::is_function<T>::value)
-        return reinterpret_cast<T*>(sym);
-    return static_cast<T*>(sym);
+    return reinterpret_cast<T*>(sym);
 }
 
 // Calls a native function and returns its result.
