@@ -252,7 +252,7 @@ Expression* Evaluator::eval_expression_list(AstExpressionList* l)
 			cout << "Evaluating native function: 2 expressions case" << endl;
 			
 			// Trivial example
-			int res = call_native<int>("trivial", "identity", 3);
+			int res = call_native<int>("trivial", "identity", 17);
 			cout << res << endl;
 
 			result = NULL;
