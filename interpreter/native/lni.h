@@ -28,7 +28,7 @@ struct lni_object {
         int as_int;
         char* as_string;
         struct {
-            lni_object* as_list;
+            lni_object** as_list;
             size_t as_list_len;
         };
         const lni_lambda as_lambda_id;
@@ -64,7 +64,7 @@ lni_object* lni_new_string_cpp(std::string val) {
 }
 #endif
 
-lni_object* lni_new_list(lni_object* val, size_t len) {
+lni_object* lni_new_list(lni_object** val, size_t len) {
     lni_object* ret = malloc(sizeof(lni_object));
     ret->type = LNI_LIST;
     ret->as_list = val;
@@ -73,18 +73,19 @@ lni_object* lni_new_list(lni_object* val, size_t len) {
 }
 
 #ifdef __cplusplus
-lni_object* lni_new_list_vector(const std::vector<lni_object>& vec) {
-    lni_object[] dat = new lni_object[vec.size()];
+lni_object* lni_new_list_vector(const std::vector<lni_object*>& vec) {
+    lni_object** dat = new lni_object*[vec.size()];
     memcpy(dat, vec.data(), vec.size());
     return lni_new_list(dat, vec.size());
 }
 
-template <typename Iterator>
-lni_object* lni_new_list_cpp(Iterator begin, Iterator end) {
-    std::vector<lni_object> vec;
-    for (auto it = begin; it != end; ++it) vec.push_back(*it);
-    return lni_new_list_vector(vec);
-}
+// template <typename Iterator>
+// lni_object* lni_new_list_cpp(Iterator begin, Iterator end) {
+//     std::vector<lni_object> vec;
+//     for (auto it = begin; it != end; ++it) vec.push_back(*it);
+//     return lni_new_list_vector(vec);
+// }
+
 #endif
 
 #ifdef __cplusplus

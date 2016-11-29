@@ -6,7 +6,7 @@
 #include "native/native.h"
 
 /*
- * Author(s): Alex Meed, Brain Zhu, Greg McDonald, Patrick Moore
+ * Author(s): Alex Meed, Brian Zhu, Greg McDonald, Patrick Moore
  * eid(s): grm695
  */
 
