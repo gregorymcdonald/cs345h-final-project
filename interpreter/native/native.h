@@ -1,8 +1,10 @@
-#include "native.h"
+#ifndef _NATIVE_H_
+#define _NATIVE_H_
 
 #include <dlfcn.h>
 #include <exception>
 #include <map>
+#include <string>
 #include <type_traits>
 
 typedef void* shlib;
@@ -20,6 +22,15 @@ namespace {
     }
 }
 
+// Retrieves a symbol from a native file.
+//
+// T is the type of the symbol as declared in the original library.
+// So get_native<int> for an int and get_native<int(int)> for a function.
+// For data symbols (T is anything but a function pointer), returns a pointer to the data.
+// For function symbols (T is a function pointer), returns a function pointer.
+//
+// The symbol is pulled from the file "libmodule.so" in the working directory, replacing module with the value of the module parameter.
+// Throws a runtime_error if the module or symbol cannot be found.
 template <typename T>
 T* get_native(std::string module, std::string symbol) {
     // Fetch module, and open if not already open
@@ -28,11 +39,20 @@ T* get_native(std::string module, std::string symbol) {
 
     void* sym = dlsym(so, symbol.data());
     if (!sym) throw std::runtime_error("symbol " + module + "::" + symbol + " not found");
-    if (std::is_function<T>::value)
-        return reinterpret_cast<T*>(sym);
-    return static_cast<T*>(sym);
+    return reinterpret_cast<T*>(sym);
 }
 
+// Calls a native function and returns its result.
+//
+// Equivalent to
+// (get_native<RetType(ArgType...)>(module, function))(argv...).
+//
+// The function is pulled from the file "libmodule.so" in the working directory, replacing module with the value of the module parameter.
+// Throws a runtime_error if the module or function cannot be found.
+//
+// WARNING: Your method call may fail spectacularly unless all of the ArgTypes and the RetType are standard layout types.
+// http://en.cppreference.com/w/cpp/concept/StandardLayoutType
+// In particular, references (like int&) and standard library types (like std::vector) are NOT standard layout types.
 template <typename RetType, typename... ArgType>
 RetType call_native(std::string module, std::string function, ArgType... argv) {
     // Fun fact: if you're calling a C function, the standard technically says that FuncType should be defined with C language linkage (aka extern "C").
@@ -45,3 +65,5 @@ RetType call_native(std::string module, std::string function, ArgType... argv) {
     FuncType* func = get_native<FuncType>(module, function);
     return func(argv...);
 }
+
+#endif

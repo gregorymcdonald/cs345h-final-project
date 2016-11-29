@@ -3,8 +3,10 @@
 
 #include "ast/expression.h"
 
+#include "native/native.h"
+
 /*
- * Author(s): Alex Meed, Brain Zhu, Greg McDonald, Patrick Moore
+ * Author(s): Alex Meed, Brian Zhu, Greg McDonald, Patrick Moore
  * eid(s): grm695
  */
 
@@ -27,7 +29,6 @@ Evaluator::Evaluator()
 {
 	sym_tab.push();
 	c = 0;
-
 }
 
 Expression* Evaluator::eval_unop(AstUnOp* b)
@@ -243,29 +244,48 @@ Expression* Evaluator::eval_expression_list(AstExpressionList* l)
         // cout << "Single Case" << endl;
         // Single case
 		Expression* e1 = Evaluator::eval(expressions[0]);
-        if(e1->get_type() != AST_LAMBDA){
-			const string& errorMessage = "Only lambda expressions can be applied to other expressions";
+        if(e1->get_type() == AST_LAMBDA){
+			AstLambda* e1_lambda = static_cast<AstLambda*>(e1);
+
+        	result = Evaluator::eval(e1_lambda->get_body()->substitute(e1_lambda->get_formal(), expressions[1]));
+		} else if (e1->get_type() == AST_DOUBLECOLON){
+			cout << "Evaluating native function: 2 expressions case" << endl;
+			
+			// Trivial example
+			int res = call_native<int>("trivial", "identity", 17);
+			cout << res << endl;
+
+			result = NULL;
+		} else {
+			const string& errorMessage = "Only lambda/native expressions can be applied to other expressions";
             report_error(l, errorMessage);
-			return NULL;
+			result = NULL;
 		}
-
-        AstLambda* e1_lambda = static_cast<AstLambda*>(e1);
-
-        result = Evaluator::eval(e1_lambda->get_body()->substitute(e1_lambda->get_formal(), expressions[1]));
-
     } else {
         // Multi case
-        unsigned int index = 1;
-        Expression* partial_result = expressions[0];
-        while(index < numExpressions){
-			vector<Expression*>* two_expressions = new vector<Expression*>();
-			two_expressions->push_back(partial_result);
-			two_expressions->push_back(expressions[index]);
-            AstExpressionList* two_exp_application = AstExpressionList::make(*two_expressions);
-            partial_result = eval_expression_list(two_exp_application);
-            ++index;
-        }
-        result = partial_result;
+        Expression* first_expression = expressions[0];
+
+        if(first_expression->get_type() == AST_LAMBDA){
+        	unsigned int index = 1;
+	        Expression* partial_result = first_expression;
+	        while(index < numExpressions){
+				vector<Expression*>* two_expressions = new vector<Expression*>();
+				two_expressions->push_back(partial_result);
+				two_expressions->push_back(expressions[index]);
+	            AstExpressionList* two_exp_application = AstExpressionList::make(*two_expressions);
+	            partial_result = eval_expression_list(two_exp_application);
+	            ++index;
+	        }
+	        result = partial_result;
+    	} else if (first_expression->get_type() == AST_DOUBLECOLON){
+			cout << "Evaluating native function: >2 expressions case" << endl;
+			// XXX
+			result = NULL;
+		} else {
+			const string& errorMessage = "Only lambda/native expressions can be applied to other expressions";
+            report_error(l, errorMessage);
+			result = NULL;
+		}
     } 
 	return result;
 }
@@ -294,7 +314,7 @@ Expression* Evaluator::eval(Expression* e){
         AstNative* native = static_cast<AstNative*>(e);
         sym_tab.push();
 		// Add a mapping from the id to this AstNative, may be a bad idea
-		// Alternatively want a NativeModule expression
+		// Alternatively want a NativeModule Expression
         sym_tab.add(native->get_id(), e);
         Expression* e2 = Evaluator::eval(native->get_body());
         sym_tab.pop();
