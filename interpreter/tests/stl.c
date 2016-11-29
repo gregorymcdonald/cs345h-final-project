@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
-#include <lni.h>
+#include "../native/lni.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -50,10 +50,10 @@
  * @param num_two Second number in the exponent (power) 
  * @return L object with value of num_one^num_two
  */
- lni_object* pow(lni_object* num_one, lni_object* num_two) {
+ lni_object* power(lni_object* num_one, lni_object* num_two) {
     assert(num_one->type == LNI_INT);
     assert(num_two->type == LNI_INT);
-    return lni_new_int((int) pow((double) num_one->as_int, (double) num_two->as_int);
+    return lni_new_int((int) pow((double) num_one->as_int, (double) num_two->as_int));
  }
 
 /**
@@ -61,7 +61,7 @@
  * @param num Number to find absolute value of
  * @return L object with value of absolute value of num
  */
- lni_object* abs(lni_object* num) {
+ lni_object* absolute_value(lni_object* num) {
     assert(num->type == LNI_INT);
     int primitive_num = num->as_int;
     if(primitive_num < 0) {
@@ -80,7 +80,7 @@
     assert(list->type == LNI_LIST);
     assert(index->type == LNI_INT);
     assert(list->as_list_len < index->as_int && index->as_int >= 0);
-    return (lni_object*) list->as_list[index];
+    return (lni_object*) list->as_list[index->as_int];
  }
 
 /**
@@ -95,7 +95,7 @@
     assert(index->type == LNI_INT);
     assert(list->as_list_len < index->as_int && index->as_int >= 0);
     //free(list->as_list[index]); //optional
-    list->as_list[index] = set_object;
+    list->as_list[index->as_int] = set_object;
     return list;
  }
   
@@ -164,8 +164,8 @@
  lni_object* reverse_list(lni_object* list) {
     assert(list->type == LNI_LIST);
     lni_object** new_list_arr = malloc(sizeof(**new_list_arr) * list->as_list_len);
-    for(int i = 0; i < first_list->as_list_len; i++) {
-        new_list_arr[i] = first_list->as_list[list->as_list_len - i - 1];
+    for(int i = 0; i < list->as_list_len; i++) {
+        new_list_arr[i] = list->as_list[list->as_list_len - i - 1];
     }
     return lni_new_list(new_list_arr, list->as_list_len);
  }
@@ -207,7 +207,7 @@
  * @param str The string
  * @return Length of the string
  */
- lni_object* strlen(lni_object* str) {
+ lni_object* string_length(lni_object* str) {
     assert(str->type == LNI_STRING);
     return lni_new_int(strlen(str->as_string));
  }
@@ -264,4 +264,13 @@
  */
  lni_object* random_number() {
     return lni_new_int(rand());
+ }
+
+ /**
+  * For testing purposes
+  */
+ int main() {
+    printf("Testing the stl library \n");
+    
+    return 0;
  }
