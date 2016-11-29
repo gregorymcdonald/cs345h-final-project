@@ -40,6 +40,7 @@
  lni_object* modulo(lni_object* num_one, lni_object* num_two) {
     assert(num_one->type == LNI_INT);
     assert(num_two->type == LNI_INT);
+    assert(num_two->as_int != 0);
     return lni_new_int(num_one->as_int % num_two->as_int);
  }
 
