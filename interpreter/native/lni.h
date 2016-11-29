@@ -10,10 +10,6 @@
 extern "C" {
 #endif
 
-#define LNI_FUNC(name, argc) \
-    const int LNI_ARGC_##name = argc; \
-    lni_object* name(lni_object* argv)
-
 enum lni_type {
     LNI_NIL,
     LNI_INT,
