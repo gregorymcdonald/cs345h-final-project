@@ -14,3 +14,6 @@ parser/parser
 
 # L-interpreter
 interpreter/l-interpreter
+
+# Combinator
+combinator/__pycache__/*
