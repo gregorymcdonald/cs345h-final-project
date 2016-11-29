@@ -97,9 +97,7 @@
     list->as_list[index] = set_object;
     return list;
  }
-
-  }
-
+  
 /**
  * Gets the first object in the list
  * @param list The list
@@ -126,6 +124,49 @@
     } else {
         return list->as_list[list->as_list_len - 1];
     }
+ }
+
+/**
+ * Gets the length of the list (only the first layer)
+ * @param list The list
+ * @return Length of the list
+ */
+ lni_object* list_length(lni_object* list) {
+    assert(list->type == LNI_LIST);
+    return lni_new_int(list->as_list_len);
+ }
+
+/**
+ * Joins two lists together
+ * @param first_list The first part of the concatenated list
+ * @param second_list The second part of the concatenated list
+ * @return The concatenated list
+ */
+ lni_object* cat_list(lni_object* first_list, lni_object* second_list) {
+    assert(first_list->type == LNI_LIST);
+    assert(second_list->type == LNI_LIST);
+    lni_object** new_list_arr = malloc(sizeof(**new_list_arr) * (first_list->as_list_len + second_list->as_list_len));
+    for(int i = 0; i < first_list->as_list_len; i++) {
+        new_list_arr[i] = first_list->as_list[i];
+    }
+    for(int i = first_list->as_list_len; i < first_list->as_list_len + second_list->as_list_len; i++) {
+        new_list_arr[i] = second_list->as_list[i - first_list->as_list_len];
+    }
+    return lni_new_list(new_list_arr, first_list->as_list_len + second_list->as_list_len);
+ }
+
+/**
+ * Reverses the list
+ * @param list The list
+ * @return The list in reverse order
+ */
+ lni_object* reverse_list(lni_object* list) {
+    assert(list->type == LNI_LIST);
+    lni_object** new_list_arr = malloc(sizeof(**new_list_arr) * list->as_list_len);
+    for(int i = 0; i < first_list->as_list_len; i++) {
+        new_list_arr[i] = first_list->as_list[list->as_list_len - i - 1];
+    }
+    return lni_new_list(new_list_arr, list->as_list_len);
  }
 
 /**
@@ -182,11 +223,27 @@
     assert(start->type == LNI_INT);
     assert(end->type == LNI_INT);
     assert(start->as_int >= 0);
-    assert(end->as_int <= atoi(str->as_string));
+    assert(end->as_int <= strlen(str->as_string));
     assert(end->as_int >= start->as_int);
     char* new_string = malloc(sizeof(char) * (end->as_int + 1 - start->as_int));
     new_string[end->as_int - start->as_int] = 0;
     strncpy(new_string, str->as_string + start->as_int, end->as_int - start->as_int);
+    return lni_new_string(new_string);
+ }
+
+/**
+ * Returns the reverse of a string
+ * @param str The string
+ * @return The reverse of the string
+ */
+ lni_object* reverse_string(lni_object* str) {
+    assert(str->type == LNI_STRING);
+    int string_length = strlen(str->as_string);
+    char* new_string = malloc(sizeof(char) * (string_length + 1));
+    new_string[string_length] = 0;
+    for(int i = 0; i < string_length; i++) {
+        new_string[i] = str->as_string[string_length - i - 1];
+    }
     return lni_new_string(new_string);
  }
 
