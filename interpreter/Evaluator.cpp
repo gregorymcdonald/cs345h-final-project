@@ -4,6 +4,7 @@
 #include "ast/expression.h"
 
 #include "native/native.h"
+#include "native/lni.h"
 
 /*
  * Author(s): Alex Meed, Brian Zhu, Greg McDonald, Patrick Moore
@@ -23,6 +24,59 @@ void report_error(Expression* e, const string & s)
 	exit(1);
 }
 
+lni_object* Evaluator::convert_expression_to_lni_object(Expression* e)
+{
+	lni_object* result = NULL;
+
+	Expression* eval_e = eval(e);
+	switch(eval_e->get_type()){
+		case AST_NIL:
+		{
+			result = lni_new_nil();
+			break;
+		}
+		case AST_INT:
+		{
+			AstInt* i = static_cast<AstInt*>(eval_e);
+			result = lni_new_int(i->get_int());
+			break;
+		}
+		case AST_STRING:
+		{
+			AstString* s = static_cast<AstString*>(eval_e);
+			result = lni_new_string_cpp(s->get_string());
+			break;
+		}
+		case AST_LIST:
+		{
+			std::vector<lni_object*> list_as_vector(0);
+
+			AstList* l = static_cast<AstList*>(eval_e);
+			while(l != NULL){
+				Expression* head = l->get_hd();
+				list_as_vector.push_back(convert_expression_to_lni_object(head));
+
+				Expression* tail = l->get_tl();
+				if(tail->get_type() == AST_LIST){
+					l = static_cast<AstList*>(tail);
+				} else {
+					list_as_vector.push_back(convert_expression_to_lni_object(tail));
+					l = NULL;
+				}
+			}
+
+			result = lni_new_list_vector(list_as_vector);
+			break;
+		}
+		default:
+		{
+			result = NULL;
+			break;
+		} 
+	}
+
+	return result;
+}
 
 
 Evaluator::Evaluator()
@@ -252,8 +306,11 @@ Expression* Evaluator::eval_expression_list(AstExpressionList* l)
 			cout << "Evaluating native function: 2 expressions case" << endl;
 			
 			// Trivial example
-			int res = call_native<int>("trivial", "identity", 17);
-			cout << res << endl;
+			// int res = call_native<int>("trivial", "identity", 17);
+			// cout << res << endl;
+			lni_object* argument = convert_expression_to_lni_object(Evaluator::eval(expressions[1]));
+			lni_object* native_result = call_native<lni_object*>("trivial", "identity", argument);
+			cout << native_result->as_int << endl;
 
 			result = NULL;
 		} else {
