@@ -10,7 +10,7 @@ def get_imports(l_file):
     string_lit_regex = '".*?"'
     stringless_prog = re.sub(string_lit_regex, '', full_prog)
 
-    import_regex = '(?:import\s+)(?P<file>\w+)'
+    import_regex = '(?:import\s+)(?P<file>\w+)(?:\s+in\s+)'
     required_L_files = set()
     for f in re.finditer(import_regex, stringless_prog):
         required_L_files.add(f.group('file'))
@@ -23,7 +23,7 @@ def build_import_graph(lib_dir, l_file):
     nexts = set()
     while len(currents) > 0:
         for f in currents:
-            nexts = nexts | get_imports(lib_dir + '/' + f + '.L')
+            nexts = nexts | get_imports(lib_dir + '/' + f + '.Lm')
         import_order.append(set.copy(currents))
         currents = set.copy(nexts)
         nexts = set()
@@ -42,8 +42,7 @@ def get_raw_code(l_file):
         for line in prog:
             full_prog += line
 
-    import_regex = '(?:import\s+)(?P<file>\w+)'
-    import_regex += '\s+in\s+'
+    import_regex = '(?:import\s+)(?P<file>\w+)(?:\s+in\s+)'
     importless_prog = re.sub(import_regex, '', full_prog)
 
     return importless_prog
@@ -53,7 +52,7 @@ def combinate(lib_dir, l_file):
     final_order = reversed(collapse_imports(build_import_graph(lib_dir, l_file)))
     for prog_set in final_order:
         for prog in prog_set:
-            final_prog += get_raw_code(lib_dir + '/' + prog + '.L')
+            final_prog += get_raw_code(lib_dir + '/' + prog + '.Lm')
     return final_prog + get_raw_code(lib_dir + '/' + l_file)
 
 parser = argparse.ArgumentParser()
