@@ -93,7 +93,7 @@
  lni_object* set(lni_object* list, lni_object* index, lni_object* set_object) {
     assert(list->type == LNI_LIST);
     assert(index->type == LNI_INT);
-    assert(list->as_list_len < index->as_int && index->as_int >= 0);
+    assert(index->as_int < list->as_list_len && index->as_int >= 0);
     //free(list->as_list[index]); //optional
     list->as_list[index->as_int] = set_object;
     return list;
@@ -195,10 +195,10 @@
  lni_object* push_back(lni_object* list, lni_object* object) {
     assert(list->type == LNI_LIST);
     lni_object** new_list_arr = malloc(sizeof(**new_list_arr) * (list->as_list_len + 1));
-    for(int i = 0; i < list->as_list_len - 1; i++) {
+    for(int i = 0; i < list->as_list_len; i++) {
         new_list_arr[i] = list->as_list[i];
     }
-    new_list_arr[list->as_list_len - 1] = object;
+    new_list_arr[list->as_list_len] = object;
     return lni_new_list(new_list_arr, list->as_list_len + 1);
  }
 
@@ -264,13 +264,4 @@
  */
  lni_object* random_number() {
     return lni_new_int(rand());
- }
-
- /**
-  * For testing purposes
-  */
- int main() {
-    printf("Testing the stl library \n");
-    
-    return 0;
  }

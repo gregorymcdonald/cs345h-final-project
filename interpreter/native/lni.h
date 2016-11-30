@@ -1,5 +1,5 @@
 // Native code programmers should include this file.
-
+#pragma once
 #include <string.h>
 #include <stdlib.h>
 
