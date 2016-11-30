@@ -436,7 +436,7 @@ Expression* Evaluator::eval_expression_list(AstExpressionList* l)
 				native_result = call_native<lni_object*>(module_name, function_name, argument1, argument2);
 				break;
 			}
-			case 4:
+			case 3:
 			{
 				lni_object* argument1 = convert_expression_to_lni_object(Evaluator::eval(expressions[2]));
 				lni_object* argument2 = convert_expression_to_lni_object(Evaluator::eval(expressions[3]));
@@ -444,6 +444,25 @@ Expression* Evaluator::eval_expression_list(AstExpressionList* l)
 				native_result = call_native<lni_object*>(module_name, function_name, argument1, argument2, argument3);
 				break;
 			}
+			case 4:
+            {
+                lni_object* argument1 = convert_expression_to_lni_object(Evaluator::eval(expressions[2]));
+                lni_object* argument2 = convert_expression_to_lni_object(Evaluator::eval(expressions[3]));
+                lni_object* argument3 = convert_expression_to_lni_object(Evaluator::eval(expressions[4]));
+                lni_object* argument4 = convert_expression_to_lni_object(Evaluator::eval(expressions[5]));
+				native_result = call_native<lni_object*>(module_name, function_name, argument1, argument2, argument3, argument4);
+                break;
+            }
+			case 5:
+            {
+                lni_object* argument1 = convert_expression_to_lni_object(Evaluator::eval(expressions[2]));
+                lni_object* argument2 = convert_expression_to_lni_object(Evaluator::eval(expressions[3]));
+                lni_object* argument3 = convert_expression_to_lni_object(Evaluator::eval(expressions[4]));
+                lni_object* argument4 = convert_expression_to_lni_object(Evaluator::eval(expressions[5]));
+				lni_object* argument5 = convert_expression_to_lni_object(Evaluator::eval(expressions[5]));
+                native_result = call_native<lni_object*>(module_name, function_name, argument1, argument2, argument3, argument4, argument5);
+                break;
+            }
 			default:
 			{
 				const string& errorMessage = "Unsupported number of arguments given to native function";
