@@ -413,7 +413,7 @@ Expression* Evaluator::eval_expression_list(AstExpressionList* l)
 		// Get module and function name
 		string module_name = native->get_file_name()->get_string();
 		string function_name = doublecolon->get_right_id()->get_id();
-		cout << "Module: " + module_name + ", function: " + function_name << endl;
+		// cout << "Module: " + module_name + ", function: " + function_name << endl;
 
 		// Get arguments and call native code
 		lni_object* native_result = NULL;
