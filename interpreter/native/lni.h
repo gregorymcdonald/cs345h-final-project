@@ -55,7 +55,8 @@ lni_object* clone_lni_object(lni_object* l){
             clone->as_list = (lni_object**)malloc(sizeof(lni_object*) * l->as_list_len);
             lni_object** original_iterator = l->as_list;
             lni_object** clone_iterator = clone->as_list;
-            for(size_t i = 0; i < l->as_list_len; ++i){
+            size_t i = 0;
+            for(;i < l->as_list_len; ++i){
                 *clone_iterator = clone_lni_object(*original_iterator);
 
                 ++clone_iterator;

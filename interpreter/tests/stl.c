@@ -147,10 +147,12 @@
     assert(first_list->type == LNI_LIST);
     assert(second_list->type == LNI_LIST);
     lni_object** new_list_arr = malloc(sizeof(**new_list_arr) * (first_list->as_list_len + second_list->as_list_len));
-    for(int i = 0; i < first_list->as_list_len; i++) {
+    int i = 0;
+    for(; i < first_list->as_list_len; i++) {
         new_list_arr[i] = first_list->as_list[i];
     }
-    for(int i = first_list->as_list_len; i < first_list->as_list_len + second_list->as_list_len; i++) {
+    i = first_list->as_list_len;
+    for(; i < first_list->as_list_len + second_list->as_list_len; i++) {
         new_list_arr[i] = second_list->as_list[i - first_list->as_list_len];
     }
     return lni_new_list(new_list_arr, first_list->as_list_len + second_list->as_list_len);
@@ -164,7 +166,8 @@
  lni_object* reverse_list(lni_object* list) {
     assert(list->type == LNI_LIST);
     lni_object** new_list_arr = malloc(sizeof(**new_list_arr) * list->as_list_len);
-    for(int i = 0; i < list->as_list_len; i++) {
+    int i = 0;
+    for(; i < list->as_list_len; i++) {
         new_list_arr[i] = list->as_list[list->as_list_len - i - 1];
     }
     return lni_new_list(new_list_arr, list->as_list_len);
@@ -180,7 +183,8 @@
     assert(list->type == LNI_LIST);
     lni_object** new_list_arr = malloc(sizeof(**new_list_arr) * (list->as_list_len + 1));
     new_list_arr[0] = object;
-    for(int i = 0; i < list->as_list_len; i++) {
+    int i = 0;
+    for(; i < list->as_list_len; i++) {
         new_list_arr[i + 1] = list->as_list[i];
     }
     return lni_new_list(new_list_arr, list->as_list_len + 1);
@@ -195,7 +199,8 @@
  lni_object* push_back(lni_object* list, lni_object* object) {
     assert(list->type == LNI_LIST);
     lni_object** new_list_arr = malloc(sizeof(**new_list_arr) * (list->as_list_len + 1));
-    for(int i = 0; i < list->as_list_len; i++) {
+    int i = 0;
+    for(; i < list->as_list_len; i++) {
         new_list_arr[i] = list->as_list[i];
     }
     new_list_arr[list->as_list_len] = object;
@@ -229,7 +234,7 @@
     char* new_string = malloc(sizeof(char) * (end->as_int + 1 - start->as_int));
     new_string[end->as_int - start->as_int] = 0;
     strncpy(new_string, str->as_string + start->as_int, end->as_int - start->as_int);
-    return lni_new_string(new_string);
+    return lni_new_string(new_string, strlen(new_string) + 1);
  }
 
 /**
@@ -242,10 +247,11 @@
     int string_length = strlen(str->as_string);
     char* new_string = malloc(sizeof(char) * (string_length + 1));
     new_string[string_length] = 0;
-    for(int i = 0; i < string_length; i++) {
+    int i = 0;
+    for(; i < string_length; i++) {
         new_string[i] = str->as_string[string_length - i - 1];
     }
-    return lni_new_string(new_string);
+    return lni_new_string(new_string, string_length + 1);
  }
 
 /**
@@ -263,5 +269,6 @@
  * @return A random number starting from 0
  */
  lni_object* random_number() {
+    srand (time(NULL));
     return lni_new_int(rand());
  }
