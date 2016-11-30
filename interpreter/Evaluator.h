@@ -22,6 +22,7 @@ public:
 	Expression* eval_expression_list(AstExpressionList* l);
 
 	lni_object* convert_expression_to_lni_object(Expression* e);
+	Expression* convert_lni_object_to_expression(lni_object* l);
 };
 
 #endif /* EVALUATOR_H_ */
