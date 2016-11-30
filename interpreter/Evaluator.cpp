@@ -287,6 +287,7 @@ Expression* Evaluator::eval_expression_list(AstExpressionList* l)
 {
 	Expression* result = NULL;
 
+	// Get the number of expressions
 	vector<Expression*> expressions = l->get_expressions();
     unsigned int numExpressions = expressions.size();
 	if(numExpressions < 2) { 
@@ -294,32 +295,117 @@ Expression* Evaluator::eval_expression_list(AstExpressionList* l)
 		return NULL;
 	}
 
-    if(numExpressions == 2){
-        // cout << "Single Case" << endl;
-        // Single case
-		Expression* e1 = Evaluator::eval(expressions[0]);
-        if(e1->get_type() == AST_LAMBDA){
-			AstLambda* e1_lambda = static_cast<AstLambda*>(e1);
+	// Evaluate the expression list
+	Expression* first_expression = Evaluator::eval(expressions[0]);
+	expression_type first_expression_type = first_expression->get_type();
+	if(first_expression_type == AST_LAMBDA){
+		if(numExpressions == 2){
+	    	// Single argument case
+			AstLambda* e1_lambda = static_cast<AstLambda*>(first_expression);
+	        result = Evaluator::eval(e1_lambda->get_body()->substitute(e1_lambda->get_formal(), expressions[1]));
+	    } else {
+	        // Multi argument case
+	       	unsigned int index = 1;
+		    Expression* partial_result = first_expression;
+		    while(index < numExpressions){
+				vector<Expression*>* two_expressions = new vector<Expression*>();
+				two_expressions->push_back(partial_result);
+				two_expressions->push_back(expressions[index]);
+		        AstExpressionList* two_exp_application = AstExpressionList::make(*two_expressions);
+		        partial_result = eval_expression_list(two_exp_application);
+		        ++index;
+		    }
+		    result = partial_result;
+	    } 
+	} else if (first_expression_type == AST_DOUBLECOLON) {
+		cout << "Evaluating native expression list" << endl;
 
+		// Check double colon is applied to native
+		AstDoubleColon* doublecolon = static_cast<AstDoubleColon*>(first_expression);
+		Expression* left_of_colon = Evaluator::eval(doublecolon->get_left_id());
+		if(left_of_colon->get_type() != AST_NATIVE){
+			const string& errorMessage = "Can only access functions of native expressions";
+        	report_error(l, errorMessage);
+			result = NULL;
+		}
+		AstNative* native = static_cast<AstNative*>(left_of_colon);
+
+		// Check if number of arguments is given
+		Expression* second_expression = Evaluator::eval(expressions[1]);
+		if(second_expression->get_type() != AST_INT){
+			const string& errorMessage = "Number of arguments must be given as first expression for native function";
+        	report_error(l, errorMessage);
+			result = NULL;
+		}
+		
+		// Check if sufficient number of arguments provided
+		AstInt* numberOfArguments = static_cast<AstInt*>(second_expression);
+		long int numNativeArgs = numberOfArguments->get_int();
+		int signedNumExpressions = static_cast<int>(numExpressions);
+		if(numNativeArgs > signedNumExpressions - 2){
+			const string& errorMessage = "Insufficient number of arguments given to native function";
+        	report_error(l, errorMessage);
+			result = NULL;
+		}
+		
+		// Get module and function name
+		string module_name = native->get_file_name()->get_string();
+		string function_name = doublecolon->get_right_id()->get_id();
+		cout << "Module: " + module_name + ", function: " + function_name << endl;
+
+		// Get arguments and call native code
+		lni_object* native_result = NULL;
+		switch(numNativeArgs){
+			case 0:
+			{
+				native_result = call_native<lni_object*>(module_name, function_name);
+				break;
+			}
+			case 1:
+			{
+				lni_object* argument = convert_expression_to_lni_object(Evaluator::eval(expressions[2]));
+				native_result = call_native<lni_object*>(module_name, function_name, argument);
+				break;
+			}
+			default:
+			{
+				const string& errorMessage = "Unsupported number of arguments given to native function";
+        		report_error(l, errorMessage);
+				result = NULL;
+				break;
+			}
+		}
+		cout << native_result->as_int << endl;
+
+		result = NULL;
+	} else {
+		const string& errorMessage = "Only lambda/native expressions can be applied to other expressions";
+        report_error(l, errorMessage);
+		result = NULL;
+	}
+
+
+	/*
+    if(numExpressions == 2){
+    	// Single argument case
+        expression_type first_expression_type = first_expression->get_type();
+        if(first_expression_type == AST_LAMBDA){
+			AstLambda* e1_lambda = static_cast<AstLambda*>(first_expression);
         	result = Evaluator::eval(e1_lambda->get_body()->substitute(e1_lambda->get_formal(), expressions[1]));
-		} else if (e1->get_type() == AST_DOUBLECOLON){
+		} else if (first_expression_type == AST_DOUBLECOLON){
 			cout << "Evaluating native function: 2 expressions case" << endl;
 			
 			// Trivial example
 			// int res = call_native<int>("trivial", "identity", 17);
 			// cout << res << endl;
 			lni_object* argument = convert_expression_to_lni_object(Evaluator::eval(expressions[1]));
-			lni_object* native_result = call_native<lni_object*>("trivial", "identity", argument);
+			lni_object* native_result = call_native<lni_object*>("identity", "identity", argument);
 			cout << native_result->as_int << endl;
 
 			result = NULL;
-		} else {
-			const string& errorMessage = "Only lambda/native expressions can be applied to other expressions";
-            report_error(l, errorMessage);
-			result = NULL;
 		}
     } else {
-        // Multi case
+        // Multi argument case
         Expression* first_expression = expressions[0];
 
         if(first_expression->get_type() == AST_LAMBDA){
@@ -334,16 +420,10 @@ Expression* Evaluator::eval_expression_list(AstExpressionList* l)
 	            ++index;
 	        }
 	        result = partial_result;
-    	} else if (first_expression->get_type() == AST_DOUBLECOLON){
-			cout << "Evaluating native function: >2 expressions case" << endl;
-			// XXX
-			result = NULL;
-		} else {
-			const string& errorMessage = "Only lambda/native expressions can be applied to other expressions";
-            report_error(l, errorMessage);
-			result = NULL;
-		}
-    } 
+    	}
+    }
+    */
+
 	return result;
 }
 
