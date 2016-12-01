@@ -100,20 +100,12 @@ program: expression
 expression:
 TOKEN_IMPORT TOKEN_STRING TOKEN_IN expression %prec EXPR
 {
-	// XXX Remove debug printing
-    string file_name_lexeme = GET_LEXEME($2);
-    cout << "DEBUG: Import statement for file: \"" + file_name_lexeme + "\"" << endl;
-
 	// Perform no evaluation for import expressions
 	$$ = $4;
 }
 |
 TOKEN_EXPORT TOKEN_IDENTIFIER TOKEN_IN expression %prec EXPR
 {
-    // XXX Remove debug printing
-	string id_lexeme = GET_LEXEME($2);
-    cout << "DEBUG: Export statement for identifier: " + id_lexeme << endl;
-
     // Perform no evaluation for export expressions
     $$ = $4;
 }
@@ -122,10 +114,6 @@ TOKEN_NATIVE TOKEN_STRING TOKEN_AS TOKEN_IDENTIFIER TOKEN_IN expression %prec EX
 {
     string file_name_lexeme = GET_LEXEME($2);
 	string id_lexeme = GET_LEXEME($4);
-    
-	// XXX Remove debug printing
-	cout << "DEBUG: Native code in file: \"" + file_name_lexeme + "\" as " + id_lexeme << endl;
-
 	AstString *file_name = AstString::make(file_name_lexeme);
 	AstIdentifier *id =  AstIdentifier::make(id_lexeme);
     $$ = AstNative::make(file_name, id, $6);
@@ -135,8 +123,6 @@ TOKEN_IDENTIFIER TOKEN_DOUBLECOLON TOKEN_IDENTIFIER
 {
 	string left_id_lexeme = GET_LEXEME($1);
 	string right_id_lexeme = GET_LEXEME($3);
-    // XXX Remove debug printing
-	cout << "DEBUG: Double-colon accessor: " + left_id_lexeme + "::" + right_id_lexeme << endl;
 	$$ = AstDoubleColon::make(left_id_lexeme, right_id_lexeme);
 }
 |
