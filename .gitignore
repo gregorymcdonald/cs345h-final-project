@@ -1,8 +1,8 @@
 # General
 *.o
 .*.swp
-parser.output
-parser.tab.*
+parser/parser.output
+parser/parser.tab.*
 
 # Lexer
 lexer/lex.yy.*
