@@ -3,4 +3,6 @@
 "H.Lm"
 "B.Lm"
 let x =3 in
-"import baz lol"
+import E in
+
+"import baz in oops"
