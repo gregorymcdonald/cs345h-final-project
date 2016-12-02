@@ -12,12 +12,19 @@ class LProgram:
     def __init__(self, lib_dir, prog):
         self.lib_dir = lib_dir
         self.prog = prog
-        self.src_dir = os.path.dirname(prog)
-        self.src_file = os.path.basename(prog)
-        self.dag = dag.DAG(prog)
+        self.dag = dag.DAG(self.src_path())
 
     def path_to(self, module):
         return self.lib_dir + '/' + module + '.Lm'
+
+    def combinated_name(self):
+        return '_' + self.prog
+
+    def combinated_path(self):
+        return self.lib_dir + '/' + self.combinated_name()
+
+    def src_path(self):
+        return self.lib_dir + '/' + self.prog
 
     def get_raw_code(self, l_file):
         full_prog = ''
@@ -62,27 +69,12 @@ class LProgram:
             self.expand_node(visited, module)
 
     def build_import_graph(self):
-        self.expand_node(set(), self.prog)
+        self.expand_node(set(), self.src_path())
 
     def combinate(self):
-        try:
-            self.build_import_graph()
-        except InvalidLFileError as e:
-            print('invalid program structure, all imports must be at top')
-            print('\t' + e.l_file)
-            return
-        except FileNotFoundError as e:
-            print('unable to find imported module')
-            print('\t' + e.filename)
-            return
-        try:
-            topo_order = self.dag.get_topological_order()
-        except dag.CycleError as e:
-            print('circular dependency detected between these two files:')
-            print('\t' + e.n1)
-            print('\t' + e.n2)
-            return
-        with open(self.src_dir+'/.'+self.src_file, 'w') as full_l:
+        self.build_import_graph()
+        topo_order = self.dag.get_topological_order()
+        with open(self.combinated_path(), 'w') as full_l:
             for module in topo_order:
                 full_l.write(self.get_raw_code(module))
 
